@@ -1,0 +1,45 @@
+{
+  "name": "ruizhi-shopweb",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@git.dev.tencent.com:boluodx/ruizhi-shopweb.git",
+  "author": "tutulyy <lyyoicq@163.com>",
+  "license": "MIT",
+  "scripts": {
+    "watch": "yarn webpack-dev-server --progress --colors --inline --config webpack.config.dev.js"
+  },
+  "dependencies": {
+    "@babel/core": "^7.3.4",
+    "@babel/plugin-proposal-class-properties": "^7.3.4",
+    "@babel/plugin-transform-runtime": "^7.3.4",
+    "@babel/preset-env": "^7.3.4",
+    "@babel/preset-react": "^7.0.0",
+    "ali-oss": "^6.1.0",
+    "antd": "^3.15.0",
+    "babel-loader": "^8.0.5",
+    "babel-plugin-import": "^1.11.0",
+    "css-loader": "^2.1.1",
+    "less": "^3.9.0",
+    "less-loader": "^4.1.0",
+    "moment": "^2.24.0",
+    "react": "^16.8.4",
+    "react-amap": "^1.2.8",
+    "react-dom": "^16.8.4",
+    "react-router-dom": "^4.3.1",
+    "style-loader": "^0.23.1"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.0.1",
+    "copy-webpack-plugin": "^5.0.0",
+    "eslint": "^5.15.1",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-node": "^8.0.1",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-react": "^7.12.4",
+    "eslint-plugin-standard": "^4.0.0",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.2.3",
+    "webpack-dev-server": "^3.2.1"
+  }
+}
