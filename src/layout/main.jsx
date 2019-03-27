@@ -42,7 +42,7 @@ class Layout_Main extends React.Component {
                         onCollapse={(collapsed, type) => { console.log(collapsed, type); }}
                     >
                         <Row className="warp_logo" type="flex" justify="center" align="middle">
-                            <Col span={24} className="logo"><Title level={4}>{'机构管理后台'}</Title></Col>
+                            <Col span={24} className="logo"><Title level={4}>{'仓库管理后台'}</Title></Col>
                         </Row>
                         <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']} onClick={this.changePage}>
                             <Menu.Item key="1">
@@ -95,7 +95,7 @@ class Layout_Main extends React.Component {
                         <Content style={{}}>
                             <MyRouter />
                         </Content>
-                        <Footer style={{ textAlign: 'center' }}>睿智教育培训平台 ©2019 Created by 嘉兴睿智科技公司</Footer>
+                        <Footer style={{ textAlign: 'center' }}>仓库管理平台 ©2019 Created by 嘉兴市分公司</Footer>
                     </Layout>
                 </Layout>
             </HashRouter>
