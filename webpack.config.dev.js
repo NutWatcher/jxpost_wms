@@ -17,8 +17,8 @@ module.exports = {
     devServer: {
         port: 3050,
         proxy: {
-            '/v1': {
-                target: 'http://localhost:3000',
+            '/': {
+                target: 'http://10.140.25.123:8080',
                 changeOrigin: true
             }
         }

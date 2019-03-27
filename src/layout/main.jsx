@@ -57,7 +57,7 @@ class Layout_Main extends React.Component {
                                 <Link to="/courseContent">
                                     <span>
                                         <Icon type="video-camera" />
-                                        <span className="nav-text">课程内容模板</span>
+                                        <span className="nav-text">入库管理</span>
                                     </span>
                                 </Link>
                             </Menu.Item>
@@ -65,15 +65,15 @@ class Layout_Main extends React.Component {
                                 <Link to="/lessonContent">
                                     <span>
                                         <Icon type="video-camera" />
-                                        <span className="nav-text">课程内容发布</span>
+                                        <span className="nav-text">出库管理</span>
                                     </span>
                                 </Link>
                             </Menu.Item>
                             <Menu.Item key="4">
-                                <Link to="/about">
+                                <Link to="/addStuff">
                                     <span>
                                         <Icon type="user" />
-                                        <span className="nav-text">关于</span>
+                                        <span className="nav-text">物料管理</span>
                                     </span>
                                 </Link>
 
