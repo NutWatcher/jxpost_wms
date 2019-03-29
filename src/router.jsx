@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
 import AddStuff from './page/addStuff.jsx';
-import About from './page/about.jsx';
+import SaveStuff from './page/saveStuff.jsx';
 import Index from './page/Index.jsx';
 
 export let MyRouter = () => {
@@ -11,7 +11,7 @@ export let MyRouter = () => {
             </Route>
             <Route path="/addStuff" component={AddStuff}>
             </Route>
-            <Route path="/about" component={About}>
+            <Route path="/saveStuff" component={SaveStuff}>
             </Route>
         </div>
     );

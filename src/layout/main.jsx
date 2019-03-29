@@ -23,9 +23,9 @@ class Layout_Main extends React.Component {
         });
     }
     changePage = ({ item, key, keyPath }) => {
-        console.log(item);
-        console.log(key);
-        console.log(keyPath);
+        // console.log(item);
+        // console.log(key);
+        // console.log(keyPath);
     }
     render () {
         return (
@@ -54,7 +54,7 @@ class Layout_Main extends React.Component {
                                 </Link>
                             </Menu.Item>
                             <Menu.Item key="2">
-                                <Link to="/courseContent">
+                                <Link to="/saveStuff">
                                     <span>
                                         <Icon type="video-camera" />
                                         <span className="nav-text">入库管理</span>
