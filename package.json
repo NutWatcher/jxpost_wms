@@ -6,7 +6,8 @@
   "author": "tutulyy <lyyoicq@163.com>",
   "license": "MIT",
   "scripts": {
-    "watch": "yarn webpack-dev-server --progress --colors --inline --config webpack.config.dev.js"
+    "watch": "yarn webpack-dev-server --progress --colors --inline --config webpack.config.dev.js",
+    "build": "yarn webpack --colors --inline --config webpack.config.js"
   },
   "dependencies": {
     "@babel/core": "^7.3.4",

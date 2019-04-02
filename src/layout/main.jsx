@@ -6,12 +6,6 @@ import './main.less';
 import Header_User from '../components/header_user.jsx';
 const { Header, Content, Footer, Sider } = Layout;
 const { Title } = Typography;
-const App = () => {
-    return (<div className="logo">{'123'}</div>);
-};
-const CourseContent = () => {
-    return (<div className="logo">{'333'}</div>);
-};
 class Layout_Main extends React.Component {
     state = {
         collapsed: false
@@ -62,7 +56,7 @@ class Layout_Main extends React.Component {
                                 </Link>
                             </Menu.Item>
                             <Menu.Item key="3">
-                                <Link to="/lessonContent">
+                                <Link to="/sellStuff">
                                     <span>
                                         <Icon type="video-camera" />
                                         <span className="nav-text">出库管理</span>
@@ -88,8 +82,8 @@ class Layout_Main extends React.Component {
                                 onClick={this.toggle}
                             /> */}
                             <div className="fr nav_wrap">
-                                <Icon className="nav_item" type="smile" theme="twoTone" />
-                                <Header_User userName="dsaf"/>
+                                {/* <Icon className="nav_item" type="smile" theme="twoTone" /> */}
+                                <Header_User userName="管理员"/>
                             </div>
                         </Header>
                         <Content style={{}}>

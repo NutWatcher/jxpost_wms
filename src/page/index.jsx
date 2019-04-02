@@ -23,7 +23,8 @@ class Index extends React.Component {
         return (
             <div id="Index">
                 <div className='content'>
-                    <Row gutter={16}>
+                主页
+                    {/* <Row gutter={16}>
                         <Col span={6}>
                             {
                                 this.state.showUserSign
@@ -42,10 +43,7 @@ class Index extends React.Component {
                                 <Title className="card_userSign_content" level={2}>12</Title>
                             </Card>
                         </Col>
-                        <Col span={8}>
-                            {/* <Card title="Card title" bordered={false}>Card content</Card> */}
-                        </Col>
-                    </Row>
+                    </Row> */}
 
                 </div>
             </div>

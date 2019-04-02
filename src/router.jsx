@@ -2,6 +2,7 @@ import React from 'react';
 import { Route } from 'react-router-dom';
 import AddStuff from './page/addStuff.jsx';
 import SaveStuff from './page/saveStuff.jsx';
+import SellStuff from './page/sellStuff.jsx';
 import Index from './page/Index.jsx';
 
 export let MyRouter = () => {
@@ -12,6 +13,8 @@ export let MyRouter = () => {
             <Route path="/addStuff" component={AddStuff}>
             </Route>
             <Route path="/saveStuff" component={SaveStuff}>
+            </Route>
+            <Route path="/sellStuff" component={SellStuff}>
             </Route>
         </div>
     );
