@@ -3,15 +3,6 @@ import { Tabs, Icon, Button, message, Tag, Typography, Modal, Col, Select, Form,
 import U_Fetch from '../../utils/fetchFilter';
 import './TabPane_SellStuffList.less';
 
-const columns = [
-    { title: '编号', dataIndex: 'id', key: 'id' },
-    { title: '订单编号', dataIndex: 'code', key: 'code' },
-    { title: '发票号', dataIndex: 'invoice', key: 'invoice' },
-    { title: '领料部门', dataIndex: 'companyName', key: 'companyName' },
-    { title: '出库时间', dataIndex: 'createDate', key: 'createDate' },
-    { title: '备注', dataIndex: 'misc', key: 'misc' },
-    { title: '操作员', dataIndex: 'userName', key: 'userName' }
-];
 class TabPane_SellStuffList extends React.Component {
     state = {
         listData: [],
@@ -107,10 +98,50 @@ class TabPane_SellStuffList extends React.Component {
             this.setState({ isLoading: false });
         }
     }
+    fetchDeleteOrder = async (orderId) => {
+        this.setState({ isLoading: true });
+        try {
+            let params = {
+                id: orderId
+            };
+            let stsFetch = new U_Fetch('/order', params, { method: 'DELETE' });
+            await stsFetch.queryFetch();
+            await stsFetch.filterFetch();
+            this.setState({ isLoading: false });
+            let data = stsFetch.data;
+            if (data.state !== true) {
+                message.error(`删除失败!:${data.message}` || '删除失败!');
+                return;
+            }
+            this.fetchOrderList();
+        } catch (e) {
+            message.error(`删除失败!:${e.toString()}` || '删除失败!');
+            this.setState({ isLoading: false });
+        }
+    }
+    deleteRecord = (id) => {
+        console.log('deleteRecord');
+        console.log(id);
+        this.fetchDeleteOrder(id);
+    }
     componentDidMount () {
         this.fetchOrderList();
     }
     render () {
+        const columns = [
+            { title: '编号', dataIndex: 'id', key: 'id' },
+            { title: '订单编号', dataIndex: 'code', key: 'code' },
+            { title: '发票号', dataIndex: 'invoice', key: 'invoice' },
+            { title: '领料部门', dataIndex: 'companyName', key: 'companyName' },
+            { title: '出库时间', dataIndex: 'createDate', key: 'createDate' },
+            { title: '备注', dataIndex: 'misc', key: 'misc' },
+            { title: '操作员', dataIndex: 'userName', key: 'userName' },
+            { title: '操作',
+                dataIndex: 'action',
+                key: 'action',
+                render: (t, record) => (<Button key="1" size='small' type="primary" onClick={this.deleteRecord.bind(this, record.id)} className="action_button">删除</Button>)
+            }
+        ];
         const data = [];
         for (let i = 0; i < this.state.listData.length; ++i) {
             data.push({ key: i, ...this.state.listData[i] });
