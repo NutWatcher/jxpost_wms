@@ -10,7 +10,7 @@ class TabPane_SellStuffList extends React.Component {
         isLoading: false,
         pagination: {
             total: 0,
-            page: 1,
+            page: 0,
             limit: 5
         }
     };
