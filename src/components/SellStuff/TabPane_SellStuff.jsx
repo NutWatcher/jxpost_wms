@@ -246,7 +246,7 @@ class TabPane_SellStuffList_Table extends React.Component {
         let list = this.state.shopcarList;
         for (let i = 0; i < list.length; i++) {
             if (list[i].id === this.state.selectShopCarStuffId) {
-                list[i].number = list[i].number + this.state.selectShopCarStuffNumber;
+                list[i].number = this.state.selectShopCarStuffNumber;
                 list[i].totalPrice = (list[i].number * list[i].unitPrice).toFixed(2);
             }
         }

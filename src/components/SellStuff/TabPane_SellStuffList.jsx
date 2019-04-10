@@ -11,7 +11,7 @@ class TabPane_SellStuffList extends React.Component {
         pagination: {
             total: 0,
             page: 1,
-            limit: 10
+            limit: 5
         }
     };
     callback = (key) => {
@@ -71,13 +71,19 @@ class TabPane_SellStuffList extends React.Component {
             />
         );
     };
+    listChangePage = (page) => {
+        let pagination = this.state.pagination;
+        pagination.page = page - 1;
+        this.setState({ pagination }, this.fetchOrderList);
+    }
     fetchOrderList = async () => {
         this.setState({ isLoading: true });
         try {
+            let pagination = this.state.pagination;
             let params = {
                 queryList: encodeURIComponent(JSON.stringify([{ 'name': 'state', 'value': '出库' }])),
-                page: 0,
-                limit: 200
+                page: pagination.page,
+                limit: pagination.limit
             };
             let stsFetch = new U_Fetch('/order', params);
             await stsFetch.queryFetch();
@@ -92,7 +98,8 @@ class TabPane_SellStuffList extends React.Component {
                 let childDate = await this.fetchOrderInfo(data.rowList[i].id);
                 data.rowList[i].child = childDate;
             }
-            this.setState({ listData: data.rowList });
+            pagination.total = data.total;
+            this.setState({ listData: data.rowList, pagination: { ...pagination } });
         } catch (e) {
             message.error(`获取分类列表失败!:${e.toString()}` || '获取上分类列表失败!');
             this.setState({ isLoading: false });
@@ -156,6 +163,14 @@ class TabPane_SellStuffList extends React.Component {
                         columns={columns}
                         expandedRowRender={this.expandedRowRender}
                         dataSource={data}
+                        pagination = {
+                            {
+                                total: this.state.pagination.total,
+                                current: this.state.pagination.page + 1,
+                                pageSize: this.state.pagination.limit,
+                                onChange: this.listChangePage
+                            }
+                        }
                     />
                 </div>
             </div>

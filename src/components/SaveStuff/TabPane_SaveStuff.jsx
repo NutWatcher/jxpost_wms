@@ -131,7 +131,11 @@ class TabPane_SaveStuffList_Table extends React.Component {
         selectStuffInfo: '',
         selectStuff: null,
         selectNumber: 1,
-        totalPrice: 0
+        totalPrice: 0,
+        errorList: [],
+        selectShopCarStuffNumber: 0,
+        selectShopCarStuffId: 0,
+        shopCarNumberVisible: false
     }
     tableKey = 1;
     shopcarListColumns = [
@@ -162,7 +166,10 @@ class TabPane_SaveStuffList_Table extends React.Component {
         }, {
             title: '数量',
             dataIndex: 'number',
-            key: 'number'
+            key: 'number',
+            render: (t, record) => {
+                return <div>{t}<Button size='small' type="primary" onClick={this.showShopCarNumberModal.bind(this, record)}>修改</Button></div>;
+            }
         }, {
             title: '总价',
             dataIndex: 'totalPrice',
@@ -205,6 +212,23 @@ class TabPane_SaveStuffList_Table extends React.Component {
         }
     }
     onChangeStuffNumber = (v) => this.setState({ selectNumber: v });
+    showShopCarNumberModal = (record) => {
+        console.log(record);
+        let selectShopCarStuffNumber = record.number;
+        let selectShopCarStuffId = record.id;
+        this.setState({ selectShopCarStuffNumber, selectShopCarStuffId, shopCarNumberVisible: true });
+    }
+    changeShopCarNumber = () => {
+        let list = this.state.shopcarList;
+        for (let i = 0; i < list.length; i++) {
+            if (list[i].id === this.state.selectShopCarStuffId) {
+                list[i].number = this.state.selectShopCarStuffNumber;
+                list[i].totalPrice = (list[i].number * list[i].unitPrice).toFixed(2);
+            }
+        }
+        let totalPrice = this.reCount(list);
+        this.setState({ totalPrice, shopcarList: list, shopCarNumberVisible: false });
+    }
     showModal = () => {
         if (this.state.selectStuff === null) {
             message.error('请选择物料名单');
@@ -218,10 +242,96 @@ class TabPane_SaveStuffList_Table extends React.Component {
         selectStuff.totalPrice = selectStuff.number * selectStuff.unitPrice;
         selectStuff.key = this.tableKey++;
         let list = this.state.shopcarList;
-        list.push(selectStuff);
-        let totalPrice = this.state.totalPrice + selectStuff.totalPrice;
+        let flag = false;
+        for (let i = 0; i < list.length; i++) {
+            if (list[i].id === selectStuff.id) {
+                flag = true;
+                list[i].number = list[i].number + selectStuff.number;
+                list[i].totalPrice = (list[i].number * list[i].unitPrice).toFixed(2);
+            }
+        }
+        if (flag === false) {
+            list.push(selectStuff);
+        }
+        let totalPrice = this.reCount(list);
         this.setState({ shopcarList: list, visible: false, totalPrice });
     }
+    fetchStuffByCode = (v) => {
+        return new Promise(async (resolve, reject) => {
+            this.setState({ isLoading: true });
+            try {
+                let params = {
+                    queryList: encodeURI(JSON.stringify([{ name: 'code', value: v }])),
+                    page: 0,
+                    limit: 200
+                };
+                let stsFetch = new U_Fetch('/material', params);
+                await stsFetch.queryFetch();
+                await stsFetch.filterFetch();
+                this.setState({ isLoading: false });
+                let data = stsFetch.data;
+                if (data.state !== true) {
+                    message.error(`获取分类列表失败!:${data.message}` || '获取分类列表失败!');
+                    reject(data.message);
+                    return;
+                }
+                resolve(data.rowList);
+            } catch (e) {
+                message.error(`获取分类列表失败!:${e.toString()}` || '获取上分类列表失败!');
+                this.setState({ isLoading: false });
+                reject(e.toString());
+            }
+        });
+    }
+    reCount = (list) => {
+        let total = 0;
+        list.forEach(item => { total += item.number * item.unitPrice; });
+        return total.toFixed(2);
+    }
+    onChangeShopCarStuffNumber = (v) => this.setState({ selectShopCarStuffNumber: v });
+    showShopCarNumberModal = (record) => {
+        console.log(record);
+        let selectShopCarStuffNumber = record.number;
+        let selectShopCarStuffId = record.id;
+        this.setState({ selectShopCarStuffNumber, selectShopCarStuffId, shopCarNumberVisible: true });
+    }
+    addStuffByCode = async () => {
+        let code = this.state.code;
+        try {
+            this.setState({ code: '' });
+            let resList = await this.fetchStuffByCode(code);
+            if (resList.length === 0) {
+                let list = this.state.errorList;
+                list.push(`${code} - 没有该物品信息`);
+                this.setState({ errorList: list });
+                return;
+            }
+            let selectStuff = resList[0];
+            selectStuff.number = 1;
+            selectStuff.totalPrice = 1 * selectStuff.unitPrice;
+            selectStuff.key = this.tableKey++;
+            let list = this.state.shopcarList;
+            let flag = false;
+            for (let i = 0; i < list.length; i++) {
+                if (list[i].id === selectStuff.id) {
+                    flag = true;
+                    list[i].number = list[i].number + selectStuff.number;
+                    list[i].totalPrice = (list[i].number * list[i].unitPrice).toFixed(2);
+                }
+            }
+            if (flag === false) {
+                list.push(selectStuff);
+            }
+
+            let totalPrice = this.reCount(list);
+            this.setState({ shopcarList: list, visible: false, totalPrice });
+        } catch (e) {
+            let list = this.state.errorList;
+            list.push(`${code} - ${e}`);
+            this.setState({ errorList: list });
+        }
+    }
+    changeCode = (e) => { this.setState({ code: e.target.value }); }
     handleCancel = () => this.setState({ visible: false });
     componentDidMount () { this.fetchStuff(''); }
     render () {
@@ -239,6 +349,8 @@ class TabPane_SaveStuffList_Table extends React.Component {
                     }
                 </Select>
                 <Button size="large" type="primary" onClick={this.showModal} className="step_button">加入入库清单</Button>
+                <Input size="large" placeholder="条码输入框" value={this.state.code}
+                    className="step_2_input" onChange={this.changeCode} onPressEnter={this.addStuffByCode}/>
                 <Modal
                     title={this.state.selectStuff ? this.state.selectStuff.name : ''}
                     visible={this.state.visible}
@@ -247,7 +359,22 @@ class TabPane_SaveStuffList_Table extends React.Component {
                 >
                     <InputNumber min={1} max={10} value={this.state.selectNumber} onChange={this.onChangeStuffNumber} />,
                 </Modal>
+                <Modal
+                    title={'修改数量'}
+                    visible={this.state.shopCarNumberVisible}
+                    onOk={this.changeShopCarNumber}
+                    onCancel={this.handleCancel}
+                >
+                    <InputNumber min={1} max={100000} value={this.state.selectShopCarStuffNumber} onChange={this.onChangeShopCarStuffNumber} />,
+                </Modal>
                 <p className="selectStuffInfo">{this.state.selectStuffInfo}</p>
+                <div>
+                    {
+                        this.state.errorList.map((item) => {
+                            return <p className="errorCodeInfo">{item}</p>;
+                        })
+                    }
+                </div>
                 <Table rowKey={'key'} columns={this.shopcarListColumns} dataSource={this.state.shopcarList} />
                 <Button size="large" type="primary" onClick={this.submit} className="step_button">执行入库</Button>
                 <span className="total_price">总价： {this.state.totalPrice}</span>
