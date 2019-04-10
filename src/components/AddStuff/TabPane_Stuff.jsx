@@ -35,11 +35,34 @@ class TabPane_Stuff_Form extends React.Component {
             this.setState({ isLoading: false });
         }
     }
+    fetchEditSettlement = async (values) => {
+        this.setState({ isLoading: true });
+        try {
+            values.id = this.props.data.id;
+            let stsFetch = new U_Fetch('/material', values, { method: 'PUT' });
+            await stsFetch.queryFetch();
+            await stsFetch.filterFetch();
+            this.setState({ isLoading: false });
+            let data = stsFetch.data;
+            if (data.state !== true) {
+                message.error(`新增失败!:${data.message}` || '新增失败!');
+                return;
+            }
+            this.props.close();
+        } catch (e) {
+            message.error(`新增失败!:${e.toString()}` || '新增失败!');
+            this.setState({ isLoading: false });
+        }
+    }
     handleSubmit = (e) => {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                this.fetchAddSettlement(values);
+                if (this.props.action === 'add') {
+                    this.fetchAddSettlement(values);
+                } else if (this.props.action === 'edit') {
+                    this.fetchEditSettlement(values);
+                }
             }
         });
     }
@@ -71,11 +94,12 @@ class TabPane_Stuff_Form extends React.Component {
     }
     render () {
         const { getFieldDecorator } = this.props.form;
+        let data = this.props.data || {};
         return (
             <Form onSubmit={this.handleSubmit} {...formItemLayout} >
                 <Form.Item label="物料名称">
                     {getFieldDecorator('name', {
-                        initialValue: this.props.name,
+                        initialValue: data.name || '',
                         rules: [{ required: true, message: '不能为空' }]
                     })(
                         <Input size="large" placeholder="" />
@@ -83,7 +107,7 @@ class TabPane_Stuff_Form extends React.Component {
                 </Form.Item>
                 <Form.Item label="物料编码">
                     {getFieldDecorator('code', {
-                        initialValue: this.props.code,
+                        initialValue: data.code || '',
                         rules: [{ required: true, message: '不能为空' }]
                     })(
                         <Input size="large" placeholder="" />
@@ -91,7 +115,7 @@ class TabPane_Stuff_Form extends React.Component {
                 </Form.Item>
                 <Form.Item label="备注">
                     {getFieldDecorator('misc', {
-                        initialValue: this.props.misc,
+                        initialValue: data.misc || '',
                         rules: [{ required: true, message: '不能为空' }]
                     })(
                         <Input size="large" placeholder="" />
@@ -99,7 +123,7 @@ class TabPane_Stuff_Form extends React.Component {
                 </Form.Item>
                 <Form.Item label="型号">
                     {getFieldDecorator('model', {
-                        initialValue: this.props.model,
+                        initialValue: data.model || '',
                         rules: [{ required: true, message: '不能为空' }]
                     })(
                         <Input size="large" placeholder="" />
@@ -107,7 +131,7 @@ class TabPane_Stuff_Form extends React.Component {
                 </Form.Item>
                 <Form.Item label="规格">
                     {getFieldDecorator('specification', {
-                        initialValue: this.props.specification,
+                        initialValue: data.specification || '',
                         rules: [{ required: true, message: '不能为空' }]
                     })(
                         <Input size="large" placeholder="" />
@@ -115,7 +139,7 @@ class TabPane_Stuff_Form extends React.Component {
                 </Form.Item>
                 <Form.Item label="单价">
                     {getFieldDecorator('unitPrice', {
-                        initialValue: this.props.unitPrice,
+                        initialValue: data.unitPrice || '',
                         rules: [{ required: true, message: '不能为空' }]
                     })(
                         <Input size="large" placeholder="" />
@@ -123,7 +147,7 @@ class TabPane_Stuff_Form extends React.Component {
                 </Form.Item>
                 <Form.Item label="发票号">
                     {getFieldDecorator('invoice', {
-                        initialValue: this.props.invoice,
+                        initialValue: data.invoice || '',
                         rules: [{ required: true, message: '不能为空' }]
                     })(
                         <Input size="large" placeholder="" />
@@ -131,7 +155,7 @@ class TabPane_Stuff_Form extends React.Component {
                 </Form.Item>
                 <Form.Item label="结算公司">
                     {getFieldDecorator('companyName', {
-                        initialValue: this.props.class,
+                        initialValue: data.companyName,
                         rules: [{ required: true, message: '不能为空' }]
                     })(
                         <Select size="large" optionFilterProp={'name'} placeholder="">
@@ -144,7 +168,12 @@ class TabPane_Stuff_Form extends React.Component {
                     )}
                 </Form.Item>
                 <Form.Item>
-                    <Button size="large" type="primary" htmlType="submit" loading={this.state.isLoading}>新增</Button>
+                    <Button size="large" type="primary" htmlType="submit" loading={this.state.isLoading}>
+                        {
+                            this.props.action === 'add'
+                                ? '新增' : '修改'
+                        }
+                    </Button>
                 </Form.Item>
             </Form>
         );
@@ -152,51 +181,33 @@ class TabPane_Stuff_Form extends React.Component {
 }
 const Wrap_TabPane_Stuff_Form = Form.create({ name: 'TabPane_Settlement_Form' })(TabPane_Stuff_Form);
 
-const columns = [{
-    title: '编号',
-    dataIndex: 'id',
-    key: 'id'
-}, {
-    title: '名称',
-    dataIndex: 'name',
-    key: 'name'
-}, {
-    title: '条形码',
-    dataIndex: 'code',
-    key: 'code'
-}, {
-    title: '型号',
-    dataIndex: 'model',
-    key: 'model'
-}, {
-    title: '规格',
-    dataIndex: 'specification',
-    key: 'specification'
-}, {
-    title: '价格',
-    dataIndex: 'unitPrice',
-    key: 'unitPrice'
-}, {
-    title: '公司',
-    dataIndex: 'companyName',
-    key: 'companyName'
-}];
 class TabPane_Stuff extends React.Component {
     state = {
         isLoading: false,
         visible: false,
+        editVisible: false,
+        editData: {},
         data: []
     }
     showModal = () => {
         this.setState({ visible: true });
     }
-    close = () => {
-        this.setState({ visible: false });
+    showEditModal = (record) => {
+        let editData = {
+            'id': record.id,
+            'name': record.name,
+            'code': record.code,
+            'misc': record.misc,
+            'model': record.model,
+            'specification': record.specification,
+            'unitPrice': record.unitPrice,
+            'invoice': record.invoice,
+            'companyName': record.companyName
+        };
+        this.setState({ editVisible: true, editData });
     }
-    addSuccess = () => {
-        this.close();
-        this.fetchStuff();
-    }
+    close = () => { this.setState({ visible: false, editVisible: false }); }
+    addSuccess = () => { this.close(); this.fetchStuff(); }
     fetchStuff = async () => {
         this.setState({ isLoading: true });
         try {
@@ -220,22 +231,63 @@ class TabPane_Stuff extends React.Component {
             this.setState({ isLoading: false });
         }
     }
-    componentDidMount () {
-        this.fetchStuff();
-    }
+    componentDidMount () { this.fetchStuff(); }
     render () {
+        const columns = [{
+            title: '编号',
+            dataIndex: 'id',
+            key: 'id'
+        }, {
+            title: '名称',
+            dataIndex: 'name',
+            key: 'name'
+        }, {
+            title: '库存',
+            dataIndex: 'quantity',
+            key: 'quantity'
+        }, {
+            title: '条形码',
+            dataIndex: 'code',
+            key: 'code'
+        }, {
+            title: '型号',
+            dataIndex: 'model',
+            key: 'model'
+        }, {
+            title: '规格',
+            dataIndex: 'specification',
+            key: 'specification'
+        }, {
+            title: '价格',
+            dataIndex: 'unitPrice',
+            key: 'unitPrice'
+        }, {
+            title: '公司',
+            dataIndex: 'companyName',
+            key: 'companyName'
+        }, {
+            title: '操作',
+            dataIndex: 'action',
+            key: 'action',
+            render: (t, record) => {
+                return <Button size='small' type="primary" onClick={this.showEditModal.bind(this, record)}>修改</Button>;
+            }
+        }];
         const list = [];
         this.state.data.forEach((item, key) => {
             list.push({
                 key: key,
                 name: item.name,
+                misc: item.misc,
                 id: item.id,
                 code: item.code,
                 model: item.model,
                 specification: item.specification,
                 companyName: item.companyName,
                 specificationc: item.specification,
-                unitPrice: item.unitPrice
+                unitPrice: item.unitPrice,
+                invoice: item.invoice,
+                quantity: item.quantity
             });
         });
         return (
@@ -244,7 +296,12 @@ class TabPane_Stuff extends React.Component {
                     <Modal title="新增物料" visible={this.state.visible}
                         onOk={this.close} onCancel={this.close}
                         footer={null}>
-                        <Wrap_TabPane_Stuff_Form close={this.addSuccess}/>
+                        <Wrap_TabPane_Stuff_Form close={this.addSuccess} action="add"/>
+                    </Modal>
+                    <Modal title="修改物料" visible={this.state.editVisible}
+                        onOk={this.close} onCancel={this.close}
+                        footer={null}>
+                        <Wrap_TabPane_Stuff_Form close={this.addSuccess} action="edit" data={this.state.editData}/>
                     </Modal>
                     <Button type="primary" htmlType="submit" onClick={this.showModal} className="add_button">新增物料</Button>
                     <Table columns={columns} dataSource={list} loading={this.state.isLoading}/>
