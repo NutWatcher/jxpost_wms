@@ -157,7 +157,7 @@ class TabPane_SaveStuffList extends React.Component {
         return (
             <div id="TabPane_SaveStuffList">
                 <div className='content'>
-                    <Button size="large" type="primary" onClick={this.fetchOrderList} className="reflash_button">刷新</Button>
+                    <Button size="large" autoFocus type="primary" onClick={this.fetchOrderList} className="reflash_button">刷新</Button>
                     <Table
                         loading = {this.state.isLoading}
                         className="components-table-demo-nested"

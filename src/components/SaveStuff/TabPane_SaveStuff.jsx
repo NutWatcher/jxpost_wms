@@ -2,6 +2,7 @@ import React from 'react';
 import { Tabs, InputNumber, Button, message, Alert, Modal, Steps, Select, Form, Input, Table } from 'antd';
 import U_Fetch from '../../utils/fetchFilter';
 import './TabPane_SaveStuff.less';
+import U_PrintOrderInfo from '../U_PrintOrderInfo.jsx';
 const Step = Steps.Step;
 const formItemLayout = {
     labelCol: {
@@ -180,7 +181,7 @@ class TabPane_SaveStuffList_Table extends React.Component {
         let selectStuff = this.state.selectStuff;
         let selectStuffInfo = this.state.selectStuffInfo;
         this.state.stuffList.forEach((item) => {
-            if (item.name === v) {
+            if (item.id === v) {
                 selectStuff = item;
                 selectStuff.number = this.state.defaultNumber;
                 selectStuffInfo = `${item.name} - ${item.code} - ${item.unitPrice}`;
@@ -344,12 +345,12 @@ class TabPane_SaveStuffList_Table extends React.Component {
                 >
                     {
                         this.state.stuffList.map((item, key) => {
-                            return <Select.Option key={key} name={item.name} value={item.name}>{item.name}</Select.Option>;
+                            return <Select.Option key={key} name={item.name} value={item.id}>{item.name}</Select.Option>;
                         })
                     }
                 </Select>
                 <Button size="large" type="primary" onClick={this.showModal} className="step_button">加入入库清单</Button>
-                <Input size="large" placeholder="条码输入框" value={this.state.code}
+                <Input size="large" autoFocus placeholder="条码输入框" value={this.state.code}
                     className="step_2_input" onChange={this.changeCode} onPressEnter={this.addStuffByCode}/>
                 <Modal
                     title={this.state.selectStuff ? this.state.selectStuff.name : ''}
@@ -404,6 +405,9 @@ class TabPane_SaveStuff_Result extends React.Component {
                             showIcon
                         />
                         : null}
+                    {this.props.result === '成功'
+                        ? <U_PrintOrderInfo id={12}/>
+                        : null}
                     {this.props.result === '失败'
                         ? <Alert
                             message="失败"
@@ -415,6 +419,7 @@ class TabPane_SaveStuff_Result extends React.Component {
                     {this.props.result === '等待' ? null
                         : <Button size="large" type="primary" onClick={this.props.next} className="step_button">继续添加入库信息</Button>
                     }
+
                 </div>
             </div>
         );

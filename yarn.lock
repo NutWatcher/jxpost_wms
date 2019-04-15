@@ -5843,6 +5843,13 @@ react-slick@~0.23.2:
     prettier "^1.14.3"
     resize-observer-polyfill "^1.5.0"
 
+react-to-print@^2.1.1:
+  version "2.1.1"
+  resolved "http://registry.npm.taobao.org/react-to-print/download/react-to-print-2.1.1.tgz#82dd3251a2b2407ac1ec928cd6f22c3e910f0dce"
+  integrity sha1-gt0yUaKyQHrB7JKM1vIsPpEPDc4=
+  dependencies:
+    prop-types "^15.6.2"
+
 react@^16.8.4:
   version "16.8.5"
   resolved "http://registry.npm.taobao.org/react/download/react-16.8.5.tgz#49be3b655489d74504ad994016407e8a0445de66"
