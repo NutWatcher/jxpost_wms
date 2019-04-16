@@ -30,6 +30,9 @@ class U_PrintOrderInfo extends React.Component {
                 message.error(`获取分类列表失败!:${data.message}` || '获取分类列表失败!');
                 return;
             }
+            for (let i = 0; i < data.rowList.length; i++) {
+                data.rowList[i].key = 'row-' + i;
+            }
             this.setState({ listData: data.rowList });
         } catch (e) {
             message.error(`获取分类列表失败!:${e.toString()}` || '获取上分类列表失败!');
@@ -67,6 +70,10 @@ class U_PrintOrderInfo extends React.Component {
             this.setState({ isLoading: false });
         }
     }
+    componentWillReceiveProps (next) {
+        this.fetchOrderInfo(next.id);
+        this.fetchOrder(next.id);
+    }
     componentDidMount () {
         this.fetchOrderInfo(this.props.id);
         this.fetchOrder(this.props.id);
@@ -88,7 +95,7 @@ class U_PrintOrderInfo extends React.Component {
                     <p>编号:{this.state.order.id}</p>
                     <p>时间:{this.state.order.date}</p>
                     <p>备注:{this.state.order.misc}</p>
-                    <p></p>
+                    <p>{this.props.message || ''}</p>
                     <Table
                         columns={columns}
                         expandedRowRender={this.expandedRowRender}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Tabs, InputNumber, Button, message, Alert, Modal, Steps, Select, Form, Input, Table } from 'antd';
 import U_Fetch from '../../utils/fetchFilter';
+import U_PrintOrderInfo from '../U_PrintOrderInfo.jsx';
 import './TabPane_SellStuff.less';
 const Step = Steps.Step;
 const formItemLayout = {
@@ -362,6 +363,9 @@ class TabPane_SellStuff_Result extends React.Component {
                             showIcon
                         />
                         : null}
+                    {this.props.result === '成功'
+                        ? <U_PrintOrderInfo id={this.props.orderId} message={'出库'}/>
+                        : null}
                     {this.props.result === '失败'
                         ? <Alert
                             message="失败"
@@ -385,6 +389,7 @@ class TabPane_SellStuff extends React.Component {
             isLoading: false,
             formAddResult: '等待',
             formAddResultMessage: '',
+            formAddResultOrderId: '0',
             form: {
                 name: '',
                 invoice: '',
@@ -426,7 +431,7 @@ class TabPane_SellStuff extends React.Component {
                 this.setState({ formAddResult: '失败', formAddResultMessage: data.message });
                 return;
             }
-            this.setState({ formAddResult: data.state ? '成功' : '失败' });
+            this.setState({ formAddResult: data.state ? '成功' : '失败', formAddResultOrderId: data.message });
         } catch (e) {
             message.error(`获取分类列表失败!:${e.toString()}` || '获取上分类列表失败!');
             this.setState({ isLoading: false });
@@ -449,7 +454,8 @@ class TabPane_SellStuff extends React.Component {
             content: <TabPane_SellStuffList_Table next={this.submit} />
         }, {
             title: '等待上传',
-            content: <TabPane_SellStuff_Result resultMessage = {this.state.formAddResultMessage}
+            content: <TabPane_SellStuff_Result orderId = {this.state.formAddResultOrderId}
+                resultMessage = {this.state.formAddResultMessage}
                 result = {this.state.formAddResult} next={this.reStart} />
         }];
         return (

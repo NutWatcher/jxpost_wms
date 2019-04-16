@@ -1,10 +1,13 @@
 import React from 'react';
-import { Tabs, Icon, Button, message, Tag, Typography, Modal, Col, Select, Form, Input, Table } from 'antd';
+import { Tabs, Icon, Button, message, Popconfirm, Typography, Modal, Col, Select, Form, Input, Table } from 'antd';
 import U_Fetch from '../../utils/fetchFilter';
+import U_PrintOrderInfo from '../U_PrintOrderInfo.jsx';
 import './TabPane_SaveStuffList.less';
 
 class TabPane_SaveStuffList extends React.Component {
     state = {
+        printVisible: false,
+        printOrderId: '0',
         listData: [],
         showModal: false,
         isLoading: false,
@@ -43,8 +46,15 @@ class TabPane_SaveStuffList extends React.Component {
         console.log(id);
         this.fetchDeleteOrder(id);
     }
+    printRecord = (id) => {
+        console.log('printRecord');
+        console.log(id);
+        this.setState({ printVisible: true, printOrderId: id });
+        // this.fetchDeleteOrder(id);
+    }
     showModal = () => this.setState({ showModal: true });
     closeModal = () => this.setState({ showModal: false });
+    hidePrintVisible = () => this.setState({ printVisible: false });
     fetchOrderInfo = async (orderId) => {
         this.setState({ isLoading: true });
         try {
@@ -151,12 +161,25 @@ class TabPane_SaveStuffList extends React.Component {
             { title: '操作',
                 dataIndex: 'action',
                 key: 'action',
-                render: (t, record) => (<Button key="1" size='small' type="primary" onClick={this.deleteRecord.bind(this, record.id)} className="action_button">删除</Button>)
+                render: (t, record) => (
+                    <div>
+                        <Popconfirm title="确定要删除这个记录吗？" onConfirm={this.deleteRecord.bind(this, record.id)} >
+                            <Button key="1" size='small' type="primary" className="action_button">删除</Button>
+                        </Popconfirm>
+                        <Button key="1" size='small' onClick={this.printRecord.bind(this, record.id)} className="action_button">打印</Button>
+                    </div>
+                )
             }
         ];
         return (
             <div id="TabPane_SaveStuffList">
                 <div className='content'>
+                    <Modal title="打印订单信息" visible={this.state.printVisible}
+                        onOk={this.hidePrintVisible} onCancel={this.hidePrintVisible}
+                        width = {800}
+                        footer={null}>
+                        <U_PrintOrderInfo id={this.state.printOrderId} message={'入库'}/>
+                    </Modal>
                     <Button size="large" autoFocus type="primary" onClick={this.fetchOrderList} className="reflash_button">刷新</Button>
                     <Table
                         loading = {this.state.isLoading}

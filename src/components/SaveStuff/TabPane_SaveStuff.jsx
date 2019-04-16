@@ -406,12 +406,12 @@ class TabPane_SaveStuff_Result extends React.Component {
                         />
                         : null}
                     {this.props.result === '成功'
-                        ? <U_PrintOrderInfo id={12}/>
+                        ? <U_PrintOrderInfo id={this.props.orderId} message={'入库'}/>
                         : null}
                     {this.props.result === '失败'
                         ? <Alert
                             message="失败"
-                            description="物料加入库存信息系统中出现了一些异常!!"
+                            description={this.props.resultMessage}
                             type="error"
                             showIcon
                         />
@@ -431,6 +431,7 @@ class TabPane_SaveStuff extends React.Component {
         this.state = {
             isLoading: false,
             formAddResult: '等待',
+            formAddResultOrderId: '0',
             form: {
                 name: '',
                 invoice: '',
@@ -473,7 +474,7 @@ class TabPane_SaveStuff extends React.Component {
                 message.error(`获取分类列表失败!:${data.message}` || '获取分类列表失败!');
                 return;
             }
-            this.setState({ formAddResult: data.state ? '成功' : '失败' });
+            this.setState({ formAddResult: data.state ? '成功' : '失败', formAddResultOrderId: data.message });
         } catch (e) {
             message.error(`获取分类列表失败!:${e.toString()}` || '获取上分类列表失败!');
             this.setState({ isLoading: false });
@@ -496,7 +497,8 @@ class TabPane_SaveStuff extends React.Component {
             content: <TabPane_SaveStuffList_Table next={this.submit} />
         }, {
             title: '等待上传',
-            content: <TabPane_SaveStuff_Result result = {this.state.formAddResult} next={this.reStart} />
+            content: <TabPane_SaveStuff_Result orderId = {this.state.formAddResultOrderId}
+                result = {this.state.formAddResult} next={this.reStart} />
         }];
         return (
             <div id="TabPane_SaveStuff">
